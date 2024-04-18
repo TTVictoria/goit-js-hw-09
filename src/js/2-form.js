@@ -1,46 +1,34 @@
-'use strict';
+const form = document.querySelector('.feedback-form');
+const inputEmail = form.elements.email;
+const textarea = form.elements.message;
+const localKeyStorage = 'feedback-form-state';
 
-console.log(Form);
+form.addEventListener('input', function () {
+  const formData = {
+    email: inputEmail.value.trim(),
+    message: textarea.value.trim(),
+  };
 
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.querySelector('.feedback-form');
-    const emailInput = form.querySelector('input[name="email"]');
-    const messageInput = form.querySelector('textarea[name="message"]');
+  localStorage.setItem(localKeyStorage, JSON.stringify(formData));
+});
 
-    // Перевірка, чи є дані в локальному сховищі
-    const savedData = localStorage.getItem('feedback-form-state');
-    if (savedData) {
-        const { email, message } = JSON.parse(savedData);
-        emailInput.value = email;
-        messageInput.value = message;
-    }
+function updateFormContent() {
+  const formUpdate = JSON.parse(localStorage.getItem(localKeyStorage)) || {};
+  inputEmail.value = formUpdate.email ?? '';
+  textarea.value = formUpdate.message ?? '';
+}
 
-    // Обробник події вводу для зберігання даних у локальному сховищі
-    form.addEventListener('input', () => {
-        const data = {
-            email: emailInput.value.trim(),
-            message: messageInput.value.trim()
-        };
-        localStorage.setItem('feedback-form-state', JSON.stringify(data));
-    });
+updateFormContent();
 
-    // Обробник події подання форми
-    form.addEventListener('submit', (event) => {
-        event.preventDefault();
+form.addEventListener('submit', function (event) {
+  event.preventDefault();
 
-        const data = {
-            email: emailInput.value.trim(),
-            message: messageInput.value.trim()
-        };
+  const formSubmit = JSON.parse(localStorage.getItem(localKeyStorage)) || {};
 
-        // Перевірка, чи обидва поля форми заповнені
-        if (data.email && data.message) {
-            console.log(data); // Виведення об'єкта даних у консоль
-            localStorage.removeItem('feedback-form-state'); // Очищення сховища
-            emailInput.value = ''; // Очищення поля Email
-            messageInput.value = ''; // Очищення поля Message
-        } else {
-            alert('Please fill in all fields.'); // Повідомлення про невалідність форми
-        }
-    });
+  if (formSubmit.email && formSubmit.message) {
+    console.log(formSubmit);
+
+    localStorage.removeItem(localKeyStorage);
+    form.reset();
+  }
 });
