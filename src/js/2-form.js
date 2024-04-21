@@ -23,9 +23,15 @@ updateFormContent();
 form.addEventListener('submit', function (event) {
   event.preventDefault();
 
-  const formSubmit = JSON.parse(localStorage.getItem(localKeyStorage)) || {};
+  const emailValue = inputEmail.value.trim();
+  const messageValue = textarea.value.trim();
 
-  if (formSubmit.email && formSubmit.message) {
+  if (emailValue && messageValue) {
+    const formSubmit = {
+      email: emailValue,
+      message: messageValue,
+    };
+
     console.log(formSubmit);
 
     localStorage.removeItem(localKeyStorage);
